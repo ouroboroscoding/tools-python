@@ -5,7 +5,7 @@ Used mainly to test that the module works as expected
 """
 
 # Pip imports
-from jobject import JObject
+from jobject import jobject
 
 # Import everything
 from . import \
@@ -15,6 +15,8 @@ from . import \
 	eval, \
 	get_client_ip, \
 	keys_to_ints, \
+	lfindi, \
+	lfindd, \
 	merge, \
 	without
 
@@ -23,7 +25,7 @@ _o = {
 	'2': 'two',
 	'3': 'three'
 }
-_jo = JObject({
+_jo = jobject({
 	'one': '1',
 	'two': '2',
 	'three': '3'
@@ -48,6 +50,12 @@ merge(jo, {'five': '5'})
 print('keys_to_ints')
 print(keys_to_ints(o))
 print(keys_to_ints(jo))
+
+l = [{'key': 1}, {'key': 2}, {'key': 3}]
+print('lfindi')
+print('1 = %d' % lfindi(l, 'key', 2))
+print('lfindd')
+print('{\'key\': 3} = %s' % str(lfindd(l, 'key', 3)))
 
 print(without(jo, 'four'))
 print(without(jo, ['four', 'five']))

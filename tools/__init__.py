@@ -12,7 +12,7 @@ __created__		= "2023-03-18"
 # Limit exports
 __all__ = [
 	'clone', 'combine', 'compare', 'eval', 'get_client_ip', 'keys_to_ints',
-	'merge', 'without'
+	'lfindi', 'lfindd', 'merge', 'without'
 ]
 
 # Python imports
@@ -298,6 +298,44 @@ def keys_to_ints(src):
 
 	# Return the new data
 	return mRet
+
+def lfindi(l: list, k: str, v: any) -> int:
+	"""List Find Index
+
+	Finds a specific dict in a list based on key name and value and returns its
+	index. Returns -1 on failure to find
+
+	Arguments:
+		l (list): The list to search
+		k (str): The key to check in each dict
+		v (any): The value of the key
+
+	Returns:
+		int
+	"""
+	for i in range(len(l)):
+		if l[i][k] == v:
+			return i
+	return -1
+
+def lfindd(l: list, k: str, v: any) -> dict | None:
+	"""List Find Dictionary
+
+	Finds a specific dict in a list based on key name and value and returns it.
+	Returns None on failure to find
+
+	Arguments:
+		l (list): The list to search
+		k (str): The key to check in each dict
+		v (any): The value of the key
+
+	Returns:
+		dict | None
+	"""
+	for d in l:
+		if d[k] == v:
+			return d
+	return None
 
 def merge(first, second):
 	"""Merge
