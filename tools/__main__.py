@@ -44,8 +44,10 @@ print('%s is True' % str(compare(without(o, ['4', '5']), _o)))
 print('%s is False' % str(compare(without(o, '4'), jo)))
 
 print('merge')
-merge(o, {'5': 'five'})
-merge(jo, {'five': '5'})
+print(merge(o, {'5': 'five'}))
+print(merge(jo, {'five': '5'}))
+print(merge(o, {'6': 'six'}, True))
+print(merge(o, {'5': 'five'}, True))
 
 print('keys_to_ints')
 print(keys_to_ints(o))

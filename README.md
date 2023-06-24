@@ -43,7 +43,7 @@ pip install Tools-OC
 ```
 
 ### compare
-`compare` is used to compare any two values. It will compare dicts and lists by traversing them, but will check any other value one to one. Like clone, it is very useful for raw data like JSON, but not great for anything with complex data like class instances unless they take care of overloading __eq__
+`compare` is used to compare any two values. It will compare dicts and lists by traversing them, but will check any other value one to one. Like clone, it is very useful for raw data like JSON, but not great for anything with complex data like class instances unless they take care of overloading \_\_eq\_\_
 ```python
 >>> from tools import compare
 >>> compare({'one': 1, 'two': 2}, {'two': 2, 'one': 1})
@@ -60,15 +60,14 @@ True
 >>> from tools import evaluate
 >>> evaluate({'one': 1, 'two': 2}, ['one', 'two', 'three'])
 ValueError: three
->>>
 ```
 
 ### get_client_ip
 Used to get the actual IP address of the client by using the provided dictionary of environment variables
 ```python
 >>> from tools import get_client_ip
->>> from bottle import requests
->>> get_client_ip(requests.environ)
+>>> from bottle import request
+>>> get_client_ip(request.environ)
 '195.201.123.59'
 ```
 
@@ -117,6 +116,16 @@ Works exactly the same as the `combine` function, but instead of creating a new 
 {'one': 1, 'three': {'four': 'quatre'}, 'two': 2}
 >>> a
 {'one': 1, 'three': {'four': 'quatre'}, 'two': 2}
+```
+`merge` contains an optional third parameter called `return_changes` that will return the differences found while merging the second dict over the first.
+```python
+>>> from tools import merge
+>>> a = { 'one': 1, 'three': { 'four': 4 } }
+>>> b = { 'two': 2, 'three': { 'four': 'quatre' }}
+>>> merge(a, b, True)
+{'two': 2, 'three': {'four': 'quatre'}}
+>>> merge(a, {'one': 1, 'three': { 'four': 4 }}, True)
+{'three': {'four': 4}}
 ```
 
 ### without
