@@ -12,7 +12,7 @@ from . import \
 	clone, \
 	combine, \
 	compare, \
-	eval, \
+	evaluate, \
 	get_client_ip, \
 	keys_to_ints, \
 	lfindi, \
@@ -61,9 +61,9 @@ print(without(jo, 'four'))
 print(without(jo, ['four', 'five']))
 print(without([o, jo], ['4', '5', 'four', 'five']))
 
-print('eval')
+print('evaluate')
 try:
-	eval(o, [6, 7])
+	evaluate(o, [6, 7])
 except ValueError as e:
 	print(e.args)
 

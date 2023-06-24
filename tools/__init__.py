@@ -11,7 +11,7 @@ __created__		= "2023-03-18"
 
 # Limit exports
 __all__ = [
-	'clone', 'combine', 'compare', 'eval', 'get_client_ip', 'keys_to_ints',
+	'clone', 'combine', 'compare', 'evaluate', 'get_client_ip', 'keys_to_ints',
 	'lfindi', 'lfindd', 'merge', 'without'
 ]
 
@@ -141,8 +141,8 @@ def compare(a: any, b: any) -> bool:
 	# Return equal
 	return True
 
-def eval(src, contains):
-	"""Eval(uate)
+def evaluate(src, contains):
+	"""Evaluate
 
 	Goes through a dict looking for keys from `contains`
 
@@ -183,7 +183,7 @@ def eval(src, contains):
 				else:
 
 					# Call the eval on the child dict
-					lChildErrs = eval(src[k], v)
+					lChildErrs = evaluate(src[k], v)
 
 					# Add errors to the list
 					if lChildErrs:
