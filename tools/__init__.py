@@ -11,7 +11,7 @@ __created__		= "2023-03-18"
 
 # Limit exports
 __all__ = [
-	'clone', 'combine', 'compare', 'eval', 'get_client_ip', 'keys_to_ints',
+	'clone', 'combine', 'compare', 'evaluate', 'get_client_ip', 'keys_to_ints',
 	'lfindi', 'lfindd', 'merge', 'without'
 ]
 
@@ -21,14 +21,17 @@ import sys
 # Pip imports
 from jobject import jobject
 
-def clone(src):
+def clone(src: dict) -> dict:
 	"""Clone
 
-	Goes through the dict and any child dicts copying the values so that we
+	Goes through the dict and any child dicts copying the values so that we \
 	don't have any references
 
 	Arguments:
 		src (dict): The source dict
+
+	Raises:
+		ValueError
 
 	Returns:
 		dict
@@ -36,7 +39,12 @@ def clone(src):
 
 	# Check the argument
 	if not isinstance(src, dict):
-		raise ValueError('%s is not a valid value for src argument of %s' % (str(src), sys._getframe().f_code.co_name))
+		raise ValueError(
+			'%s is not a valid value for src argument of %s' % (
+				str(src),
+				sys._getframe().f_code.co_name
+			)
+		)
 
 	# Initialise the new dict
 	if isinstance(src, jobject):
@@ -66,10 +74,10 @@ def clone(src):
 	# Return the new dict
 	return dRet
 
-def combine(first, second):
+def combine(first: dict, second: dict) -> dict:
 	"""Combine
 
-	Generates a new dict by combining the two passed, values in second will
+	Generates a new dict by combining the two passed, values in second will \
 	overwrite values in first
 
 	Arguments:
@@ -82,9 +90,19 @@ def combine(first, second):
 
 	# Make sure both arguments are actual dicts
 	if not isinstance(first, dict):
-		raise ValueError('%s is not a valid value for first of %s' % (str(first), sys._getframe().f_code.co_name))
+		raise ValueError(
+			'%s is not a valid value for first of %s' % (
+				str(first),
+				sys._getframe().f_code.co_name
+			)
+		)
 	if not isinstance(second, dict):
-		raise ValueError('%s is not a valid value for second of %s' % (str(second), sys._getframe().f_code.co_name))
+		raise ValueError(
+			'%s is not a valid value for second of %s' % (
+				str(second),
+				sys._getframe().f_code.co_name
+			)
+		)
 
 	# Copy the first dict
 	dRet = clone(first)
@@ -141,19 +159,19 @@ def compare(a: any, b: any) -> bool:
 	# Return equal
 	return True
 
-def eval(src, contains):
-	"""Eval(uate)
+def evaluate(src: dict, contains: list) -> None:
+	"""Evaluate
 
 	Goes through a dict looking for keys from `contains`
 
 	Arguments:
 		src (dict): The dict we are evaluating
-		contains (list): A list of values to check for, if the value is a dict
-			rather than a string, expects keys to be keys pointing to further
+		contains (list): A list of values to check for, if the value is a dict \
+			rather than a string, expects keys to be keys pointing to further \
 			lists of keys
 
-	Return:
-		list | None
+	Raises:
+		A ValueError with each arg being a key that is missing from the src
 	"""
 
 	# Initialise the list of errors
@@ -183,7 +201,7 @@ def eval(src, contains):
 				else:
 
 					# Call the eval on the child dict
-					lChildErrs = eval(src[k], v)
+					lChildErrs = evaluate(src[k], v)
 
 					# Add errors to the list
 					if lChildErrs:
@@ -198,11 +216,11 @@ def eval(src, contains):
 	if lErrs:
 		raise ValueError(*lErrs)
 
-def get_client_ip(environ):
+def get_client_ip(environ: dict) -> str:
 	"""Get Client IP
 
-	Returns the IP of the client based on all the environment data passed to
-	the current webserver request
+	Returns the IP of the client based on all the environment data passed to \
+	the current webserver request, or whatever dict based value you pass to it
 
 	Arguments:
 		environ (dict): A dictionary of environment variables
@@ -234,24 +252,27 @@ def get_client_ip(environ):
 	# Return the IP
 	return sIP
 
-def keys_to_ints(src):
+def keys_to_ints(src: dict | list) -> dict | list:
 	"""Keys To Ints
 
-	Recursively goes through a dictionary and converts all keys that are
-	numeric but stored as strings to integers. Returns a new dict and doesn't
+	Recursively goes through a dictionary and converts all keys that are \
+	numeric but stored as strings to integers. Returns a new dict and doesn't \
 	alter the original.
 
-	PLEASE NOTE: this method is not useful for classes, or anything complex, it
-	is meant primarily for converting JSON objects which don't allow ints as
-	keys. Passing a set, tuple, or iterable class will not result in the
+	PLEASE NOTE: this method is not useful for classes, or anything complex, \
+	it is meant primarily for converting JSON objects which don't allow ints \
+	as keys. Passing a set, tuple, or iterable class will not result in the \
 	expected result
 
 	Arguments:
-		src (dict|list): The dict we are modifying, accepts lists in order to
-							handle recursive following the data
+		src (dict|list): The dict we are modifying, accepts lists in order to \
+							handle recursively following the data
+
+	Raises:
+		ValueError
 
 	Returns:
-		dict|list
+		dict | list
 	"""
 
 	# If we got a dict
@@ -294,7 +315,12 @@ def keys_to_ints(src):
 
 	# Else, raise an error
 	else:
-		raise ValueError('src of %s must be a dict or list, received %s' % (sys._getframe().f_code.co_name, str(type(src))))
+		raise ValueError(
+			'src of %s must be a dict or list, received %s' % (
+				sys._getframe().f_code.co_name,
+				str(type(src))
+			)
+		)
 
 	# Return the new data
 	return mRet
@@ -302,8 +328,8 @@ def keys_to_ints(src):
 def lfindi(l: list, k: str, v: any) -> int:
 	"""List Find Index
 
-	Finds a specific dict in a list based on key name and value and returns its
-	index. Returns -1 on failure to find
+	Finds a specific dict in a list based on key name and value and returns \
+	its index. Returns -1 on failure to find
 
 	Arguments:
 		l (list): The list to search
@@ -321,8 +347,8 @@ def lfindi(l: list, k: str, v: any) -> int:
 def lfindd(l: list, k: str, v: any) -> dict | None:
 	"""List Find Dictionary
 
-	Finds a specific dict in a list based on key name and value and returns it.
-	Returns None on failure to find
+	Finds a specific dict in a list based on key name and value and returns \
+	it. Returns None on failure to find
 
 	Arguments:
 		l (list): The list to search
@@ -337,46 +363,106 @@ def lfindd(l: list, k: str, v: any) -> dict | None:
 			return d
 	return None
 
-def merge(first, second):
+def merge(
+	first: dict,
+	second: dict,
+	return_changes: bool = False
+) -> dict | None:
 	"""Merge
 
-	Overwrites the first dict by adding the values from the second. Returns the
-	first for chaining / ease of use
+	Overwrites the first dict by adding the values from the second. Returns \
+	the first for chaining / ease of use, unless return_changes is set to \
+	True, in which case, a dict of changes will be returned
 
 	Arguments:
 		first (dict): The dict to be changed/overwritten
 		second (dict): The dict that will do the overwriting
+		return_changes (bool): Optional, by default merge will not keep track \
+							of changes between the two dicts. If set to True, \
+							a dict of changes, possible empty, will be \
+							returned instead of the first argument
 
 	Returns:
-		dict
+		the first argument, or a dict of changes, or none for no changes
 	"""
+
+	# If we want changes
+	if return_changes:
+		dChanges = {}
 
 	# Make sure both arguments are actual dicts
 	if not isinstance(first, dict):
-		raise ValueError('%s is not a valid value for first of %s' % (str(first), sys._getframe().f_code.co_name))
+		raise ValueError(
+			'%s is not a valid value for first of %s' % (
+				str(first),
+				sys._getframe().f_code.co_name
+			)
+		)
 	if not isinstance(second, dict):
-		raise ValueError('%s is not a valid value for second of %s' % (str(second), sys._getframe().f_code.co_name))
+		raise ValueError(
+			'%s is not a valid value for second of %s' % (
+				str(second),
+				sys._getframe().f_code.co_name
+			)
+		)
 
-	# Get each key of the second dict
-	for m in second:
+	# If we want changes
+	if return_changes:
 
-		# If the value is another dict and it exists in first as well
-		if isinstance(second[m], dict) and m in first and isinstance(first[m], dict):
+		# Get each key of the second dict
+		for k in second:
 
-			# Call merge
-			merge(first[m], second[m])
+			# If the value is another dict and it exists in first as well
+			if isinstance(second[k], dict) and \
+				k in first and isinstance(first[k], dict):
 
-		# else we overwrite the value as is
-		else:
-			first[m] = second[m]
+				# Get the diff
+				dDiff = merge(first[k], second[k], True)
 
-	# Return the new dict
-	return first
+				# If there is any, add it to the changes
+				if dDiff:
+					dChanges[k] = dDiff
 
-def without(data: dict | list[dict], keys: str | list[str]) -> dict | list[dict]:
+			# else, if the key doesn't exist in the first, or there is a
+			#	difference between the keys
+			elif k not in first or first[k] != second[k]:
+
+				# Store the new value
+				first[k] = second[k]
+
+				# Set the changes
+				dChanges[k] = second[k]
+
+		# Return the changes or nothing
+		return dChanges or None
+
+	# Else, just call without changes
+	else:
+
+		# Get each key of the second dict
+		for k in second:
+
+			# If the value is another dict and it exists in first as well
+			if isinstance(second[k], dict) and \
+				k in first and isinstance(first[k], dict):
+
+				# Merge it
+				merge(first[k], second[k])
+
+			# else we overwrite the value as is
+			else:
+				first[k] = second[k]
+
+		# Return the existing first argument for chaining
+		return first
+
+def without(
+	data: dict | list[dict],
+	keys: str | list[str]
+) -> dict | list[dict]:
 	"""Without
 
-	Copies one or more dictionaries and returns them without the key or keys
+	Copies one or more dictionaries and returns them without the key or keys \
 	passed
 
 	Arguments:

@@ -12,7 +12,7 @@ from . import \
 	clone, \
 	combine, \
 	compare, \
-	eval, \
+	evaluate, \
 	get_client_ip, \
 	keys_to_ints, \
 	lfindi, \
@@ -44,8 +44,10 @@ print('%s is True' % str(compare(without(o, ['4', '5']), _o)))
 print('%s is False' % str(compare(without(o, '4'), jo)))
 
 print('merge')
-merge(o, {'5': 'five'})
-merge(jo, {'five': '5'})
+print(merge(o, {'5': 'five'}))
+print(merge(jo, {'five': '5'}))
+print(merge(o, {'6': 'six'}, True))
+print(merge(o, {'5': 'five'}, True))
 
 print('keys_to_ints')
 print(keys_to_ints(o))
@@ -61,9 +63,9 @@ print(without(jo, 'four'))
 print(without(jo, ['four', 'five']))
 print(without([o, jo], ['4', '5', 'four', 'five']))
 
-print('eval')
+print('evaluate')
 try:
-	eval(o, [6, 7])
+	evaluate(o, [6, 7])
 except ValueError as e:
 	print(e.args)
 
