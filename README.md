@@ -1,10 +1,10 @@
-# Ouroboros Coding Tools
+# Tools by Ouroboros Coding
 [![pypi version](https://img.shields.io/pypi/v/Tools-OC.svg)](https://pypi.org/project/Tools-OC) ![MIT License](https://img.shields.io/pypi/l/Tools-OC.svg)
 
 A set of functions for common python problems
 
 ## Requires
-Config-OC requires python 3.10 or higher
+Tools-OC requires python 3.10 or higher
 
 ## Installation
 ```bash
