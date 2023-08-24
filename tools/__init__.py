@@ -458,16 +458,22 @@ def merge(
 
 def without(
 	data: dict | list[dict],
-	keys: str | list[str]
+	keys: str | list[str],
+	in_place: bool = False
 ) -> dict | list[dict]:
 	"""Without
 
 	Copies one or more dictionaries and returns them without the key or keys \
-	passed
+	passed.
+
+	By passing True to the optional third argument `in_place`, the keys are \
+	removed from `data` directly, and `data` is returned instead of a copy.
 
 	Arguments:
 		data (dict | dict[]): The dictionary(s) to remove keys from
 		keys (str | str[]): The key or keys to remove
+		in_place (bool): Optional, set to True to modify `data` in place and \
+							return it
 
 	Returns:
 		dict | dict[]
@@ -482,7 +488,7 @@ def without(
 		# Go through each index
 		for d in data:
 			lRet.append(
-				without(d, keys)
+				without(d, keys, in_place)
 			)
 
 		# Return the new list
@@ -491,8 +497,8 @@ def without(
 	# Else, if we have a dict
 	elif isinstance(data, dict):
 
-		# Clone the object
-		dRet = clone(data)
+		# Clone the object (or just pass it)
+		dRet = in_place and data or clone(data)
 
 		# If we have a single string
 		if isinstance(keys, str):
