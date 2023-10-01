@@ -201,11 +201,10 @@ def evaluate(src: dict, contains: list) -> None:
 				else:
 
 					# Call the eval on the child dict
-					lChildErrs = evaluate(src[k], v)
-
-					# Add errors to the list
-					if lChildErrs:
-						for sErr in lChildErrs:
+					try:
+						evaluate(src[k], v)
+					except ValueError as e:
+						for sErr in e.args:
 							lErrs.append(k + '.' + sErr)
 
 		# We got an unknown type of key
