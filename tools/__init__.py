@@ -166,12 +166,17 @@ def evaluate(src: dict, contains: list) -> None:
 
 	Arguments:
 		src (dict): The dict we are evaluating
-		contains (list): A list of values to check for, if the value is a dict \
-			rather than a string, expects keys to be keys pointing to further \
-			lists of keys
+		contains (list): A list of values to check for. If one of the values \
+			is another list rather than a string, element 0 is expected to be \
+			the key to a dict, with the element 1 pointing to further \
+			lists of keys in that dict. This way an entire document can be \
+			evaluated in one call
 
 	Raises:
 		A ValueError with each arg being a key that is missing from the src
+
+	Returns:
+		None on success
 	"""
 
 	# Initialise the list of errors
@@ -186,6 +191,23 @@ def evaluate(src: dict, contains: list) -> None:
 			# If value does not exist in the source
 			if s not in src or (isinstance(src[s], str) and not src[s]):
 				lErrs.append(s)
+
+		# Else, if we got a list
+		elif isinstance(s, list):
+
+			# If the key doesn't exist in the source or has no value
+			if s[0] not in src or not src[s[0]]:
+				lErrs.append(s[0])
+
+			# Else, check the children
+			else:
+
+				# Call the eval on the child dict
+				try:
+					evaluate(src[s[0]], s[1])
+				except ValueError as e:
+					for sErr in e.args:
+						lErrs.append(s[0] + '.' + sErr)
 
 		# Else, if we got a dict
 		elif isinstance(s, dict):
