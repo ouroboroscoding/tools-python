@@ -11,12 +11,13 @@ __created__		= "2023-03-18"
 
 # Limit exports
 __all__ = [
-	'clone', 'combine', 'compare', 'evaluate', 'get_client_ip', 'keys_to_ints',
-	'lfindi', 'lfindd', 'merge', 'without'
+	'clone', 'combine', 'compare', 'crop', 'evaluate', 'fit', 'get_client_ip',
+	'keys_to_ints', 'lfindi', 'lfindd', 'merge', 'region', 'without'
 ]
 
 # Python imports
 import sys
+from typing import Dict
 
 # Pip imports
 from jobject import jobject
@@ -159,6 +160,43 @@ def compare(a: any, b: any) -> bool:
 	# Return equal
 	return True
 
+def crop(w: int, h: int, bw: int, bh: int) -> Dict[str, int]:
+	"""Crop
+
+	Makes sure one side fits and crops the other
+
+	Arguments:
+		w (int): The current width
+		h (int): The current height
+		bw (int): The boundary width
+		bh (int): The boundary height
+
+	Returns:
+		{ w: int, h: int }
+	"""
+
+	# Easier to work with floats
+	w = float(w)
+	h = float(h)
+
+	# If the image is already smaller, make it bigger
+	if w < bw or h < bh:
+
+		# Which is the side that needs to grow more?
+		if (bw / w) > (bh / h):
+			return { 'w': bw, 'h': int(round(bw * (h / w))) }
+		else:
+			return { 'w': int(round(bh * (w / h))), 'h': bh }
+
+	# Else, make it smaller
+	else:
+
+		# Which is the side that needs to shrink less?
+		if (w / bw) > (h / bh):
+			return { 'w': int(round(bh * (w / h))), 'h': bh }
+		else:
+			return { 'w': bw, 'h': int(round(bw * (h / w))) }
+
 def evaluate(src: dict, contains: list) -> None:
 	"""Evaluate
 
@@ -236,6 +274,44 @@ def evaluate(src: dict, contains: list) -> None:
 	# If there's any errors
 	if lErrs:
 		raise ValueError(*lErrs)
+
+def fit(w: int, h: int, bw: int, bh: int) -> Dict[str, int]:
+	"""Fit
+
+	Makes sure one side fits and makes the other smaller to keep the proper\
+	ratio
+
+	Arguments:
+		w (int): The current width
+		h (int): The current height
+		bw (int): The boundary width
+		bh (int): The boundary height
+
+	Returns:
+		{ w: int, h: int }
+	"""
+
+	# Easier to work with floats
+	w = float(w)
+	h = float(h)
+
+	# If the image is already smaller, make it bigger
+	if w < bw and h < bh:
+
+		# Figure out the larger side
+		if (bw / w) > (bh / h):
+			return { 'w': int(round(bh * (w / h))), 'h': bh }
+		else:
+			return { 'w': bw, 'h': int(round(bw * (h / w))) }
+
+	# Else, make it smaller
+	else:
+
+		# Figure out the larger side
+		if (w / bw) > (h / bh):
+			return { 'w': bw, 'h': int(round(bw * (h / w))) }
+		else:
+			return { 'w': int(round(bh * (w / h))), 'h': bh }
 
 def get_client_ip(environ: dict) -> str:
 	"""Get Client IP
@@ -476,6 +552,40 @@ def merge(
 
 		# Return the existing first argument for chaining
 		return first
+
+def region(w: int, h: int, bw: int, bh: int) -> Dict[str, int]:
+	"""Region
+
+	Returns a new set of region points based on a current width and height and
+	the bounding box
+
+	Arguments:
+		w (int): The current width
+		h (int): The current height
+		bw (int): The boundary width
+		bh (int): The boundary height
+
+	Returns:
+		{ x: int, y: int, w: int, h: int }
+	"""
+
+	# If the current width is larger than the bounds width
+	if w > bw:
+		return {
+			'x': int(round((w - bw) / 2.0)),
+			'y': 0,
+			'w': int(bw + round((w - bw) / 2.0)),
+			'h': bh
+		}
+
+	# Else if the current height is larger than the bounds height
+	else:
+		return {
+			'x': 0,
+			'y': int(round((h - bh) / 2.0)),
+			'w': bw,
+			'h': int(bh + round((h - bh) / 2.0))
+		}
 
 def without(
 	data: dict | list[dict],
