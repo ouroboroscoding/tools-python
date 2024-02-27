@@ -5,7 +5,7 @@ with open('README.md', 'r') as oF:
 
 setup(
 	name='tools-oc',
-	version='1.2.2',
+	version='1.2.3',
 	description='A set of tools for common python problems',
 	long_description=long_description,
 	long_description_content_type='text/markdown',
