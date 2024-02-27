@@ -12,12 +12,15 @@ from . import \
 	clone, \
 	combine, \
 	compare, \
+	crop, \
 	evaluate, \
+	fit, \
 	get_client_ip, \
 	keys_to_ints, \
 	lfindi, \
 	lfindd, \
 	merge, \
+	region, \
 	without
 
 _o = {

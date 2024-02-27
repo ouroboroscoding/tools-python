@@ -54,12 +54,32 @@ False
 True
 ```
 
+### crop
+`crop` takes two sets of dimensions and returns what the first set needs to be resized to in order to make one side fit, and the other side cropped.
+```python
+>>> from tools import crop
+>>> crop(512, 1024, 500, 500)
+{'w': 500, 'h': 1000}
+>>> crop(1920, 1080, 1024, 1024)
+{'w': 1820, 'h': 1024}
+```
+
 ### evaluate
 `evaluate` is used to evaluate if a dictionary contains the keys it requires, without a lot of complicated configuration. It's meant for simple dictionaries, but can also check keys of keys
 ```python
 >>> from tools import evaluate
 >>> evaluate({'one': 1, 'two': 2}, ['one', 'two', 'three'])
 ValueError: three
+```
+
+### fit
+`fit` takes two sets of dimensions and returns what the first set needs to be resized to in order for both sides to fit, leaving one side empty (whitespace)
+```python
+>>> from tools import fit
+>>> fit(512, 1024, 500, 500)
+{'w': 250, 'h': 500}
+>>> fit(1920, 1080, 1024, 1024)
+{'w': 1024, 'h': 576}
 ```
 
 ### get_client_ip
@@ -126,6 +146,16 @@ Works exactly the same as the `combine` function, but instead of creating a new 
 {'two': 2, 'three': {'four': 'quatre'}}
 >>> merge(a, {'one': 1, 'three': { 'four': 4 }}, True)
 {'three': {'four': 4}}
+```
+
+### region
+`region` returns a new set of region points based on a current width and height and the bounding box. It is most useful combined with crop/fit in order to center a resized image to fit in the new dimensions
+```python
+from tools import region
+>>> region(512, 1024, 500, 500)
+{'x': 6, 'y': 0, 'w': 506, 'h': 500}
+>>> region(1920, 1080, 1024, 1024)
+{'x': 448, 'y': 0, 'w': 1472, 'h': 1024}
 ```
 
 ### without
