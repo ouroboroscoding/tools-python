@@ -15,12 +15,12 @@ __all__ = [
 	'keys_to_ints', 'lfindi', 'lfindd', 'merge', 'region', 'without'
 ]
 
+# Ouroboros imports
+from jobject import jobject
+
 # Python imports
 import sys
-from typing import Dict
-
-# Pip imports
-from jobject import jobject
+from typing import Dict, List
 
 def clone(src: dict) -> dict:
 	"""Clone
@@ -197,79 +197,76 @@ def crop(w: int, h: int, bw: int, bh: int) -> Dict[str, int]:
 		else:
 			return { 'w': bw, 'h': int(round(bw * (h / w))) }
 
-def evaluate(src: dict, contains: list) -> None:
+def evaluate(
+	src: dict,
+	contains: list | dict,
+	prepend: str = ''
+):
 	"""Evaluate
 
-	Goes through a dict looking for keys from `contains`
+	Goes through a dict looking for keys from `contains`. Raises a ValueError \
+	with the list of values from `contains` that are missing in `src`
 
 	Arguments:
 		src (dict): The dict we are evaluating
-		contains (list): A list of values to check for. If one of the values \
-			is another list rather than a string, element 0 is expected to be \
-			the key to a dict, with the element 1 pointing to further \
-			lists of keys in that dict. This way an entire document can be \
-			evaluated in one call
+		contains (list | dict): A list of keys to check for. If one of the \
+			keys is a dict, it is evaluated itself with the values as children \
+			keys
+		prepend (str): Optional string to prepend to all missing keys
 
 	Raises:
 		A ValueError with each arg being a key that is missing from the src
-
-	Returns:
-		None on success
 	"""
 
 	# Initialise the list of errors
 	lErrs = []
 
-	# Go through each contains value
-	for s in contains:
+	# If we got a list
+	if isinstance(contains, list):
 
-		# If the value is a string
-		if isinstance(s, str):
+		# Step through each key
+		for k in contains:
 
-			# If value does not exist in the source
-			if s not in src or (isinstance(src[s], str) and not src[s]):
-				lErrs.append(s)
+			# If the key is a string
+			if isinstance(k, str):
 
-		# Else, if we got a list
-		elif isinstance(s, list):
+				# If key does not exist in the source, or it does, but it's
+				#	an empty string
+				if k not in src or \
+					(isinstance(src[k], str) and not src[k]):
+
+					# Add it as missing
+					lErrs.append('%s%s' % (prepend, k))
+
+			# Else, if the "key" is actually a dict
+			elif isinstance(k, dict):
+
+				# Evaluate it
+				try:
+					evaluate(src, k, prepend)
+				except ValueError as e:
+					lErrs.extend(e.args)
+
+	# Else, if we got a dict
+	elif isinstance(contains, dict):
+
+		# Step through each key
+		for k,v in contains.items():
 
 			# If the key doesn't exist in the source or has no value
-			if s[0] not in src or not src[s[0]]:
-				lErrs.append(s[0])
+			if k not in src or not src[k]:
+				lErrs.append('%s%s' % (prepend, k))
 
 			# Else, check the children
 			else:
-
-				# Call the eval on the child dict
 				try:
-					evaluate(src[s[0]], s[1])
+					evaluate(src[k], v, '%s%s.' % (prepend, k))
 				except ValueError as e:
-					for sErr in e.args:
-						lErrs.append(s[0] + '.' + sErr)
+					lErrs.extend(e.args)
 
-		# Else, if we got a dict
-		elif isinstance(s, dict):
-
-			# Go through the key/value pairs in the dict
-			for k,v in s.items():
-
-				# If the key doesn't exist in the source or has no value
-				if k not in src or not src[k]:
-					lErrs.append(k)
-
-				# Else, check the children
-				else:
-
-					# Call the eval on the child dict
-					try:
-						evaluate(src[k], v)
-					except ValueError as e:
-						for sErr in e.args:
-							lErrs.append(k + '.' + sErr)
-
-		# We got an unknown type of key
-		else:
-			lErrs.append(str(s))
+	# We got an unknown type of key
+	else:
+		lErrs.append('%s%s' % (prepend, str(contains)))
 
 	# If there's any errors
 	if lErrs:
@@ -278,7 +275,7 @@ def evaluate(src: dict, contains: list) -> None:
 def fit(w: int, h: int, bw: int, bh: int) -> Dict[str, int]:
 	"""Fit
 
-	Makes sure one side fits and makes the other smaller to keep the proper\
+	Makes sure one side fits and makes the other smaller to keep the proper \
 	ratio
 
 	Arguments:

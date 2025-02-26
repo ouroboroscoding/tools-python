@@ -5,7 +5,7 @@ with open('README.md', 'r') as oF:
 
 setup(
 	name='tools-oc',
-	version='1.2.4',
+	version='1.2.5',
 	description='A set of tools for common python problems',
 	long_description=long_description,
 	long_description_content_type='text/markdown',
@@ -21,7 +21,7 @@ setup(
 	packages=['tools'],
 	python_requires='>=3.10',
 	install_requires=[
-		"jobject>=1.0.1,<1.1"
+		"jobject>=1.0.3,<1.1"
 	],
 	zip_safe=True
 )
