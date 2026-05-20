@@ -1,0 +1,31 @@
+[build-system]
+requires = [ 'hatchling' ]
+build-backend = 'hatchling.build'
+
+[project]
+name = 'tools_oc'
+version = '1.2.6'
+description = 'A set of tools for common python problems'
+keywords = [ 'tools', 'clone', 'diff', 'merge', 'combine' ]
+authors = [ {
+	name = 'Chris Nasr - Ouroboros Coding Inc.',
+	email = 'chris@ouroboroscoding.com'
+} ]
+maintainers = [ {
+	name = 'Chris Nasr - Ouroboros Coding Inc.',
+	email = 'chris@ouroboroscoding.com'
+} ]
+license-files = [ 'LICENSE' ]
+readme = 'README.md'
+requires-python = '>=3.10'
+dependencies = [
+	'jobject>=1.0.4,<1.1'
+]
+
+[project.urls]
+Documentation = 'https://github.com/ouroboroscoding/tools-python'
+Source = 'https://github.com/ouroboroscoding/tools-python'
+Tracker = 'https://github.com/ouroboroscoding/tools-python/issues'
+
+[tool.hatch.build]
+packages = [ 'tools' ]
