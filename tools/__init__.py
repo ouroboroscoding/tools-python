@@ -19,17 +19,22 @@ __all__ = [
 from jobject import jobject
 
 # Python imports
+from copy import deepcopy
 import sys
-from typing import Dict, List
+from typing import Any, Dict
+import warnings
 
-def clone(src: dict) -> dict:
+def clone(src: Any) -> dict:
 	"""Clone
 
-	Goes through the dict and any child dicts copying the values so that we \
-	don't have any references
+	Removes references from standard Array/Object structures similar to JSON.
+	Does not work with anything more complicated than lists or dicts.
+
+	This function is now deprecated, users should use Python's built in
+	copy.deepcopy instead.
 
 	Arguments:
-		src (dict): The source dict
+		src (any): The source structure to clone
 
 	Raises:
 		ValueError
@@ -38,42 +43,16 @@ def clone(src: dict) -> dict:
 		dict
 	"""
 
-	# Check the argument
-	if not isinstance(src, dict):
-		raise ValueError(
-			'%s is not a valid value for src argument of %s' % (
-				str(src),
-				sys._getframe().f_code.co_name
-			)
-		)
+	# Warn of deprecation
+	warnings.warn(
+		'clone() is deprecated and will be removed in v1.3.0, use Python\'s ' \
+			'built in copy.deepcopy() instead.',
+		DeprecationWarning,
+		stacklevel=2
+	)
 
-	# Initialise the new dict
-	if isinstance(src, jobject):
-		dRet = jobject()
-	else:
-		dRet = {}
-
-	# Get each key of the source dict
-	for k in src:
-
-		# If the key points to another dict
-		if isinstance(src[k], dict):
-
-			# Call clone on it
-			dRet[k] = clone(src[k])
-
-		# Else if the key points to a list
-		elif isinstance(src[k], list):
-
-			# Use list magic to copy it
-			dRet[k] = src[k][:]
-
-		# Else it's a standard variable
-		else:
-			dRet[k] = src[k]
-
-	# Return the new dict
-	return dRet
+	# Call deepcopy and return the value
+	return deepcopy(src)
 
 def combine(first: dict, second: dict) -> dict:
 	"""Combine

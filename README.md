@@ -1,20 +1,32 @@
 # Tools by Ouroboros Coding
-[![pypi version](https://img.shields.io/pypi/v/tools-oc.svg)](https://pypi.org/project/tools-oc) ![MIT License](https://img.shields.io/pypi/l/tools-oc.svg)
+[![pypi version](https://img.shields.io/pypi/v/tools_oc.svg)](https://pypi.org/project/tools_oc)
+![MIT License](https://img.shields.io/pypi/l/tools_oc.svg)
 
-A set of functions for common python problems
+Please see [LICENSE](https://github.com/ouroboroscoding/tools-python/blob/main/LICENSE)
+for further information.
+
+See [Releases](https://github.com/ouroboroscoding/tools-python/blob/main/releases.md)
+for changes from release to release.
+
+A set of functions for common python problems.
 
 ## Requires
-tools-oc requires python 3.10 or higher
+tools_oc requires python 3.10 or higher
 
 ## Installation
 ```bash
-pip install Tools-OC
+pip install tools_oc
 ```
 
 ## Functions
 
 ### clone
-`clone` is used to make a complete copy of a dictionary from top to bottom. It follows keys that are either dictionaries or lists and clones them as well, but copies anything else as is. Great for copying raw data like JSON, not great for complex structures containing class instances.
+clone is deprecated as of 1.2.6. Use Python's `copy.deepcopy` method instead.
+
+`clone` is used to make a complete copy of a dictionary from top to bottom. It
+follows keys that are either dictionaries or lists and clones them as well, but
+copies anything else as is. Great for copying raw data like JSON, not great for
+complex structures containing class instances.
 ```python
 >>> from tools import clone
 >>> a = {'hello': 'their'}
@@ -29,7 +41,8 @@ pip install Tools-OC
 ```
 
 ### combine
-`combine` is used to generate a new dictionary by cloning the first one passed, then by merging the second into it, and returning it
+`combine` is used to generate a new dictionary by cloning the first one passed,
+then by merging the second into it, and returning it
 ```python
 >>> from tools import combine
 >>> a = { 'one': 1 }
@@ -43,7 +56,10 @@ pip install Tools-OC
 ```
 
 ### compare
-`compare` is used to compare any two values. It will compare dicts and lists by traversing them, but will check any other value one to one. Like clone, it is very useful for raw data like JSON, but not great for anything with complex data like class instances unless they take care of overloading \_\_eq\_\_
+`compare` is used to compare any two values. It will compare dicts and lists by
+traversing them, but will check any other value one to one. Like clone, it is
+very useful for raw data like JSON, but not great for anything with complex data
+like class instances unless they take care of overloading \_\_eq\_\_
 ```python
 >>> from tools import compare
 >>> compare({'one': 1, 'two': 2}, {'two': 2, 'one': 1})
@@ -55,7 +71,8 @@ True
 ```
 
 ### crop
-`crop` takes two sets of dimensions and returns what the first set needs to be resized to in order to make one side fit, and the other side cropped.
+`crop` takes two sets of dimensions and returns what the first set needs to be
+resized to in order to make one side fit, and the other side cropped.
 ```python
 >>> from tools import crop
 >>> crop(512, 1024, 500, 500)
@@ -65,7 +82,9 @@ True
 ```
 
 ### evaluate
-`evaluate` is used to evaluate if a dictionary contains the keys it requires, without a lot of complicated configuration. It's meant for simple dictionaries, but can also check keys of keys
+`evaluate` is used to evaluate if a dictionary contains the keys it requires,
+without a lot of complicated configuration. It's meant for simple dictionaries,
+but can also check keys of keys
 ```python
 >>> from tools import evaluate
 >>> evaluate({'one': 1, 'two': 2}, ['one', 'two', 'three'])
@@ -73,7 +92,8 @@ ValueError: three
 ```
 
 ### fit
-`fit` takes two sets of dimensions and returns what the first set needs to be resized to in order for both sides to fit, leaving one side empty (whitespace)
+`fit` takes two sets of dimensions and returns what the first set needs to be
+resized to in order for both sides to fit, leaving one side empty (whitespace)
 ```python
 >>> from tools import fit
 >>> fit(512, 1024, 500, 500)
@@ -83,7 +103,8 @@ ValueError: three
 ```
 
 ### get_client_ip
-Used to get the actual IP address of the client by using the provided dictionary of environment variables
+Used to get the actual IP address of the client by using the provided dictionary
+of environment variables
 ```python
 >>> from tools import get_client_ip
 >>> from bottle import request
@@ -92,7 +113,9 @@ Used to get the actual IP address of the client by using the provided dictionary
 ```
 
 ### keys_to_ints
-Traverses a dictionary and converts any keys from strings to integers. Helpful for processing data like JSON that won't allow keys as anything other than strings
+Traverses a dictionary and converts any keys from strings to integers. Helpful
+for processing data like JSON that won't allow keys as anything other than
+strings
 ```python
 >>> from tools import keys_to_ints
 >>> keys_to_ints({'1': 'one', '2': 'two'})
@@ -100,7 +123,9 @@ Traverses a dictionary and converts any keys from strings to integers. Helpful f
 ```
 
 ### lfindi
-Steps through the given list of dictionaries looking for one with a key that matches the value, and returns the index of that dictionary in the list, else -1 for no dictionary found.
+Steps through the given list of dictionaries looking for one with a key that
+matches the value, and returns the index of that dictionary in the list, else -1
+for no dictionary found.
 ```python
 >>> from tools import lfindi
 >>> l = [
@@ -114,7 +139,8 @@ Steps through the given list of dictionaries looking for one with a key that mat
 ```
 
 ### lfindd
-Works exactly the same as lfindi, but returns the dictionary instead of its index
+Works exactly the same as lfindi, but returns the dictionary instead of its
+index
 ```python
 >>> from tools import lfindd
 >>> l = [
@@ -127,7 +153,9 @@ Works exactly the same as lfindi, but returns the dictionary instead of its inde
 ```
 
 ### merge
-Works exactly the same as the `combine` function, but instead of creating a new dict by cloning the first one, that step is skipped and the second dict is simple merged with the first and returned altered
+Works exactly the same as the `combine` function, but instead of creating a new
+dict by cloning the first one, that step is skipped and the second dict is
+simple merged with the first and returned altered
 ```python
 >>> from tools import merge
 >>> a = { 'one': 1, 'three': { 'four': 4 } }
@@ -137,7 +165,8 @@ Works exactly the same as the `combine` function, but instead of creating a new 
 >>> a
 {'one': 1, 'three': {'four': 'quatre'}, 'two': 2}
 ```
-`merge` contains an optional third parameter called `return_changes` that will return the differences found while merging the second dict over the first.
+`merge` contains an optional third parameter called `return_changes` that will
+return the differences found while merging the second dict over the first.
 ```python
 >>> from tools import merge
 >>> a = { 'one': 1, 'three': { 'four': 4 } }
@@ -149,7 +178,9 @@ Works exactly the same as the `combine` function, but instead of creating a new 
 ```
 
 ### region
-`region` returns a new set of region points based on a current width and height and the bounding box. It is most useful combined with crop/fit in order to center a resized image to fit in the new dimensions
+`region` returns a new set of region points based on a current width and height
+and the bounding box. It is most useful combined with crop/fit in order to
+center a resized image to fit in the new dimensions
 ```python
 from tools import region
 >>> region(512, 1024, 500, 500)
@@ -159,7 +190,8 @@ from tools import region
 ```
 
 ### without
-`without` is used to strip out one or more keys from a dictionary, or a list of dictionaries
+`without` is used to strip out one or more keys from a dictionary, or a list of
+dictionaries
 ```python
 >>> from tools import without
 >>> l = [
