@@ -4,9 +4,9 @@ build-backend = 'hatchling.build'
 
 [project]
 name = 'tools_oc'
-version = '1.2.6'
+version = '1.2.7'
 description = 'A set of tools for common python problems'
-keywords = [ 'tools', 'clone', 'diff', 'merge', 'combine' ]
+keywords = [ 'tools', 'diff', 'merge', 'combine' ]
 authors = [ {
 	name = 'Chris Nasr - Ouroboros Coding Inc.',
 	email = 'chris@ouroboroscoding.com'

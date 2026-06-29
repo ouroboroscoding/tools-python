@@ -8,20 +8,22 @@ Used mainly to test that the module works as expected
 from jobject import jobject
 
 # Import everything
-from . import \
-	clone, \
-	combine, \
-	compare, \
-	crop, \
-	evaluate, \
-	fit, \
-	get_client_ip, \
-	keys_to_ints, \
-	lfindi, \
-	lfindd, \
-	merge, \
-	region, \
+from . import (
+	clone,
+	combine,
+	compare,
+	crop,
+	evaluate,
+	fit,
+	get_client_ip,
+	keep,
+	keys_to_ints,
+	lfindi,
+	lfindd,
+	merge,
+	region,
 	without
+)
 
 _o = {
 	'1': 'one',
@@ -52,6 +54,10 @@ print(merge(jo, {'five': '5'}))
 print(merge(o, {'6': 'six'}, True))
 print(merge(o, {'5': 'five'}, True))
 
+print('keep')
+print(keep(_o, [ '1', '3' ]))
+print(keep(_jo, [ 'one', 'three' ]))
+
 print('keys_to_ints')
 print(keys_to_ints(o))
 print(keys_to_ints(jo))
@@ -62,6 +68,7 @@ print('1 = %d' % lfindi(l, 'key', 2))
 print('lfindd')
 print('{\'key\': 3} = %s' % str(lfindd(l, 'key', 3)))
 
+print('without')
 print(without(jo, 'four'))
 print(without(jo, ['four', 'five']))
 print(without([o, jo], ['4', '5', 'four', 'five']))
