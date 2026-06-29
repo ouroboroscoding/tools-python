@@ -12,7 +12,7 @@ __created__		= "2023-03-18"
 # Limit exports
 __all__ = [
 	'clone', 'combine', 'compare', 'crop', 'evaluate', 'fit', 'get_client_ip',
-	'keys_to_ints', 'lfindi', 'lfindd', 'merge', 'region', 'without'
+	'keep', 'keys_to_ints', 'lfindi', 'lfindd', 'merge', 'region', 'without'
 ]
 
 # Ouroboros imports
@@ -45,7 +45,7 @@ def clone(src: Any) -> dict:
 
 	# Warn of deprecation
 	warnings.warn(
-		'clone() is deprecated and will be removed in v1.3.0, use Python\'s ' \
+		'clone() is deprecated and will be removed in v1.3.0, use Python\'s '
 			'built in copy.deepcopy() instead.',
 		DeprecationWarning,
 		stacklevel=2
@@ -57,7 +57,7 @@ def clone(src: Any) -> dict:
 def combine(first: dict, second: dict) -> dict:
 	"""Combine
 
-	Generates a new dict by combining the two passed, values in second will \
+	Generates a new dict by combining the two passed, values in second will
 	overwrite values in first
 
 	Arguments:
@@ -85,7 +85,7 @@ def combine(first: dict, second: dict) -> dict:
 		)
 
 	# Copy the first dict
-	dRet = clone(first)
+	dRet = deepcopy(first)
 
 	# Call merge to avoid duplicate code and return the cloned dict
 	return merge(dRet, second)
@@ -183,13 +183,13 @@ def evaluate(
 ):
 	"""Evaluate
 
-	Goes through a dict looking for keys from `contains`. Raises a ValueError \
+	Goes through a dict looking for keys from `contains`. Raises a ValueError
 	with the list of values from `contains` that are missing in `src`
 
 	Arguments:
 		src (dict): The dict we are evaluating
-		contains (list | dict): A list of keys to check for. If one of the \
-			keys is a dict, it is evaluated itself with the values as children \
+		contains (list | dict): A list of keys to check for. If one of the
+			keys is a dict, it is evaluated itself with the values as children
 			keys
 		prepend (str): Optional string to prepend to all missing keys
 
@@ -254,7 +254,7 @@ def evaluate(
 def fit(w: int, h: int, bw: int, bh: int) -> Dict[str, int]:
 	"""Fit
 
-	Makes sure one side fits and makes the other smaller to keep the proper \
+	Makes sure one side fits and makes the other smaller to keep the proper
 	ratio
 
 	Arguments:
@@ -292,7 +292,7 @@ def fit(w: int, h: int, bw: int, bh: int) -> Dict[str, int]:
 def get_client_ip(environ: dict) -> str:
 	"""Get Client IP
 
-	Returns the IP of the client based on all the environment data passed to \
+	Returns the IP of the client based on all the environment data passed to
 	the current webserver request, or whatever dict based value you pass to it
 
 	Arguments:
@@ -325,20 +325,71 @@ def get_client_ip(environ: dict) -> str:
 	# Return the IP
 	return sIP
 
+def keep(
+	data: dict | list[dict],
+	keys: str | list[str]
+) -> dict | list[dict]:
+	"""Keep
+
+	Copies one or more dictionaries and returns them with only the key or keys
+	passed.
+
+	Arguments:
+		data (dict | dict[]): The dictionary(s) to keep keys from
+		keys (str | str[]): The key or keys to keep
+
+	Returns:
+		dict | dict[]
+	"""
+
+	# If we have a list
+	if isinstance(data, list):
+
+		# Return a list from keep calls
+		return [
+			keep(d, keys) for d in data
+		]
+
+	# Else, if we have a dict
+	elif isinstance(data, dict):
+
+		# If we have a str
+		if isinstance(keys, str):
+			try:
+				return { keys: data[keys] }
+			except KeyError:
+				return { }
+
+		# Else, if we have multiple
+		elif isinstance(keys, list):
+			dRet = { }
+			for key in keys:
+				try: dRet[key] = data[key]
+				except KeyError: pass
+			return dRet
+
+		# Else, error
+		else:
+			raise ValueError('keys', keys)
+
+	# Else, error
+	else:
+		ValueError('data', data)
+
 def keys_to_ints(src: dict | list) -> dict | list:
 	"""Keys To Ints
 
-	Recursively goes through a dictionary and converts all keys that are \
-	numeric but stored as strings to integers. Returns a new dict and doesn't \
+	Recursively goes through a dictionary and converts all keys that are
+	numeric but stored as strings to integers. Returns a new dict and doesn't
 	alter the original.
 
-	PLEASE NOTE: this method is not useful for classes, or anything complex, \
-	it is meant primarily for converting JSON objects which don't allow ints \
-	as keys. Passing a set, tuple, or iterable class will not result in the \
+	PLEASE NOTE: this method is not useful for classes, or anything complex,
+	it is meant primarily for converting JSON objects which don't allow ints
+	as keys. Passing a set, tuple, or iterable class will not result in the
 	expected result
 
 	Arguments:
-		src (dict|list): The dict we are modifying, accepts lists in order to \
+		src (dict|list): The dict we are modifying, accepts lists in order to
 							handle recursively following the data
 
 	Raises:
@@ -401,7 +452,7 @@ def keys_to_ints(src: dict | list) -> dict | list:
 def lfindi(l: list, k: str, v: any) -> int:
 	"""List Find Index
 
-	Finds a specific dict in a list based on key name and value and returns \
+	Finds a specific dict in a list based on key name and value and returns
 	its index. Returns -1 on failure to find
 
 	Arguments:
@@ -420,7 +471,7 @@ def lfindi(l: list, k: str, v: any) -> int:
 def lfindd(l: list, k: str, v: any) -> dict | None:
 	"""List Find Dictionary
 
-	Finds a specific dict in a list based on key name and value and returns \
+	Finds a specific dict in a list based on key name and value and returns
 	it. Returns None on failure to find
 
 	Arguments:
@@ -443,16 +494,16 @@ def merge(
 ) -> dict | None:
 	"""Merge
 
-	Overwrites the first dict by adding the values from the second. Returns \
-	the first for chaining / ease of use, unless return_changes is set to \
+	Overwrites the first dict by adding the values from the second. Returns
+	the first for chaining / ease of use, unless return_changes is set to
 	True, in which case, a dict of changes will be returned
 
 	Arguments:
 		first (dict): The dict to be changed/overwritten
 		second (dict): The dict that will do the overwriting
-		return_changes (bool): Optional, by default merge will not keep track \
-							of changes between the two dicts. If set to True, \
-							a dict of changes, possible empty, will be \
+		return_changes (bool): Optional, by default merge will not keep track
+							of changes between the two dicts. If set to True,
+							a dict of changes, possible empty, will be
 							returned instead of the first argument
 
 	Returns:
@@ -570,16 +621,16 @@ def without(
 ) -> dict | list[dict]:
 	"""Without
 
-	Copies one or more dictionaries and returns them without the key or keys \
+	Copies one or more dictionaries and returns them without the key or keys
 	passed.
 
-	By passing True to the optional third argument `in_place`, the keys are \
+	By passing True to the optional third argument `in_place`, the keys are
 	removed from `data` directly, and `data` is returned instead of a copy.
 
 	Arguments:
 		data (dict | dict[]): The dictionary(s) to remove keys from
 		keys (str | str[]): The key or keys to remove
-		in_place (bool): Optional, set to True to modify `data` in place and \
+		in_place (bool): Optional, set to True to modify `data` in place and
 							return it
 
 	Returns:
@@ -605,7 +656,7 @@ def without(
 	elif isinstance(data, dict):
 
 		# Clone the object (or just pass it)
-		dRet = in_place and data or clone(data)
+		dRet = in_place and data or deepcopy(data)
 
 		# If we have a single string
 		if isinstance(keys, str):
